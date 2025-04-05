@@ -10,6 +10,8 @@ from PIL import Image
 import torchvision.transforms as T
 import torch.nn as nn
 from collections import OrderedDict
+from fastapi.middleware.cors import CORSMiddleware
+
 
 def create_latent_vector(prompt, latent_size=128):
     # Convert prompt to a numpy array, use a fixed seed for reproducibility
