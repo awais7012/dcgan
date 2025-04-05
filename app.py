@@ -22,6 +22,13 @@ def create_latent_vector(prompt, latent_size=128):
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Use specific origins in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Load the generator model (assumes it's defined and weights are loaded)
 # Ensure you load your trained generator model here
 
