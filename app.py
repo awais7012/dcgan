@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 import torch
+import tempfile
+import os
 import numpy as np
 from torchvision.utils import save_image
 from io import BytesIO
@@ -120,7 +122,9 @@ transform = T.Compose([
     T.CenterCrop(image_size),
     T.ToTensor(),
     T.Normalize(*stats)])
-
+@app.get("/")
+async def root():
+    return{"Welcome to the Ai gan project"}
 @app.get("/generate/{prompt}")
 async def generate_image(prompt: int):
     try:
@@ -139,7 +143,12 @@ async def generate_image(prompt: int):
         save_image(generated_image, buf, format='PNG')
         buf.seek(0)
 
+        # Convert BytesIO to a temporary file
+        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+            tmp_file.write(buf.getvalue())
+            tmp_path = tmp_file.name
+
         # Return the image
-        return FileResponse(buf, media_type="image/png")
+        return FileResponse(tmp_path, media_type="image/png")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
